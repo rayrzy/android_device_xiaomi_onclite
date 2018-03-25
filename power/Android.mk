@@ -17,14 +17,12 @@ LOCAL_SRC_FILES := power-8953.c power.c metadata-parser.c utils.c list.c hint-da
 LOCAL_C_INCLUDES := external/libxml2/include \
                     external/icu/icu4c/source/common
 
-
 ifeq ($(TARGET_USES_INTERACTION_BOOST),true)
     LOCAL_CFLAGS += -DINTERACTION_BOOST
 endif
 
 LOCAL_MODULE := power.qcom
 LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS += -Wno-unused-parameter -Wno-unused-variable
+LOCAL_CFLAGS += -Wall -Wextra -Wno-error -Wno-implicit-function-declaration -Wno-unused-parameter -Wno-unused-variable
 LOCAL_VENDOR_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
-
