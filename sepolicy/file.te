@@ -11,6 +11,9 @@ type gf_data_file, file_type, data_file_type, core_data_file_type;
 # FPC FP
 type sysfs_fpc, sysfs_type, fs_type;
 
+# FPS info
+type sysfs_fps, sysfs_type, fs_type;
+
 # Input devices
 type idc_file, file_type, vendor_file_type;
 type keylayout_file, file_type, vendor_file_type;
