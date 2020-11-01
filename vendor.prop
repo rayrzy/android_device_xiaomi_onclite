@@ -24,6 +24,7 @@ vendor.voice.voip.conc.disabled=true
 vendor.qcom.bluetooth.soc=pronto
 
 # Charger
+ro.charger.disable_init_blank=true
 ro.charger.enable_suspend=true
 
 # Display post-processing
