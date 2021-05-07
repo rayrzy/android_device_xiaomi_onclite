@@ -45,6 +45,15 @@ void load_props(const std::string &device, const std::string &model) {
     }
 }
 
+void set_build_fingerprint(const std::string &fingerprint, const std::string &description) {
+    property_override("ro.build.fingerprint", fingerprint);
+    property_override("ro.system.build.fingerprint", fingerprint);
+    property_override("ro.vendor.build.fingerprint", fingerprint);
+    property_override("ro.bootimage.build.fingerprint", fingerprint);
+
+    property_override("ro.build.description", description);
+}
+
 void set_dalvik_properties() {
     struct sysinfo sys;
     sysinfo(&sys);
@@ -85,9 +94,17 @@ void vendor_load_properties() {
             || boot_cert == "M1810F6LE" || boot_cert == "M1810F6LT" || boot_cert == "M1810F6LC") {
         // Redmi 7 (onclite)
         load_props("onclite", "Redmi 7");
+        set_build_fingerprint(
+            "xiaomi/onc/onc:10/QKQ1.191008.001/V12.5.3.0.QFLCNXM:user/release-keys",
+            "onc-user 10 QKQ1.191008.001 V12.5.3.0.QFLCNXM release-keys"
+        );
     } else if (boot_cert == "M1810F6G" || boot_cert == "M1810F6I") {
         // Redmi Y3 (onc)
         load_props("onc", "Redmi Y3");
+        set_build_fingerprint(
+            "xiaomi/onc/onc:10/QKQ1.191008.001/V11.0.6.0.QFFINXM:user/release-keys",
+            "onc-user 10 QKQ1.191008.001 V11.0.6.0.QFFINXM release-keys"
+        );
     }
 
     set_dalvik_properties();
