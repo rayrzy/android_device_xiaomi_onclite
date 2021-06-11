@@ -574,18 +574,11 @@ service charger /system/bin/charger
     group system graphics
     seclabel u:r:charger:s0
 
-service vendor.msm_irqbalance /vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance.conf
-    class core
-    user root
-    group root
-    disabled
-    writepid /dev/cpuset/system-background/tasks
-
 service vendor.msm_irqbal_lb /vendor/bin/msm_irqbalance -f /system/vendor/etc/msm_irqbalance_little_big.conf
     class core
     user root
     group root
-    disabled
+    writepid /dev/cpuset/system-background/tasks
 
 on charger
     setprop persist.sys.usb.config mass_storage
