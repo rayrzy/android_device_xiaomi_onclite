@@ -82,10 +82,13 @@ void vendor_load_properties() {
     std::string boot_cert = android::base::GetProperty("ro.boot.product.cert", "");
 
     if (boot_cert == "M1810F6LG" || boot_cert == "M1810F6LH" || boot_cert == "M1810F6LI"
-            || boot_cert == "M1810F6LE" || boot_cert == "M1810F6LT" || boot_cert == "M1810F6LC")
+            || boot_cert == "M1810F6LE" || boot_cert == "M1810F6LT" || boot_cert == "M1810F6LC") {
+        // Redmi 7 (onclite)
         load_props("onclite", "Redmi 7");
-    else
+    } else if (boot_cert == "M1810F6G" || boot_cert == "M1810F6I") {
+        // Redmi Y3 (onc)
         load_props("onc", "Redmi Y3");
+    }
 
     set_dalvik_properties();
     set_avoid_gfxaccel_config();
