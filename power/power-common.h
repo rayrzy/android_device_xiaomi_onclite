@@ -46,8 +46,8 @@
 #define INPUT_EVENT_WAKUP_MODE_ON 5
 
 enum CPU_GOV_CHECK {
-    CPU0 = 0,
-    CPU1 = 1,
-    CPU2 = 2,
-    CPU3 = 3
+  CPU0 = 0,
+  CPU1 = 1,
+  CPU2 = 2,
+  CPU3 = 3
 };

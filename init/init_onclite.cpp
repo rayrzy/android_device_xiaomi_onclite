@@ -19,94 +19,91 @@
 #include <string>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
-
 #include <sys/sysinfo.h>
+
 #include "property_service.h"
 #include "vendor_init.h"
 
 using android::init::property_set;
 
 void property_override(const std::string &prop, const std::string &value) {
-    auto pi = (prop_info*) __system_property_find(prop.c_str());
+  auto pi = (prop_info *)__system_property_find(prop.c_str());
 
-    if (pi != nullptr)
-        __system_property_update(pi, value.c_str(), value.size());
-    else
-        __system_property_add(prop.c_str(), prop.size(), value.c_str(), value.size());
+  if (pi != nullptr)
+    __system_property_update(pi, value.c_str(), value.size());
+  else
+    __system_property_add(prop.c_str(), prop.size(), value.c_str(), value.size());
 }
 
 void load_props(const std::string &device, const std::string &model) {
-    std::string RO_PROP_SOURCES[] = { "", "odm.", "system.", "vendor." };
+  std::string RO_PROP_SOURCES[] = {"", "odm.", "system.", "vendor."};
 
-    for (const std::string &source : RO_PROP_SOURCES) {
-        property_override(std::string("ro.product.") + source + std::string("name"), device);
-        property_override(std::string("ro.product.") + source + std::string("device"), device);
-        property_override(std::string("ro.product.") + source + std::string("model"), model);
-    }
+  for (const std::string &source : RO_PROP_SOURCES) {
+    property_override(std::string("ro.product.") + source + std::string("name"), device);
+    property_override(std::string("ro.product.") + source + std::string("device"), device);
+    property_override(std::string("ro.product.") + source + std::string("model"), model);
+  }
 }
 
 void set_build_fingerprint(const std::string &fingerprint, const std::string &description) {
-    property_override("ro.build.fingerprint", fingerprint);
-    property_override("ro.system.build.fingerprint", fingerprint);
-    property_override("ro.vendor.build.fingerprint", fingerprint);
-    property_override("ro.bootimage.build.fingerprint", fingerprint);
+  property_override("ro.build.fingerprint", fingerprint);
+  property_override("ro.system.build.fingerprint", fingerprint);
+  property_override("ro.vendor.build.fingerprint", fingerprint);
+  property_override("ro.bootimage.build.fingerprint", fingerprint);
 
-    property_override("ro.build.description", description);
+  property_override("ro.build.description", description);
 }
 
 void set_dalvik_properties() {
-    struct sysinfo sys;
-    sysinfo(&sys);
+  struct sysinfo sys;
+  sysinfo(&sys);
 
-    if (sys.totalram > 3072ull * 1024 * 1024) {
-        // Set for 4GB RAM
-        property_set("dalvik.vm.heapstartsize", "8m");
-        property_set("dalvik.vm.heapgrowthlimit", "192m");
-        property_set("dalvik.vm.heapsize", "512m");
-        property_set("dalvik.vm.heaptargetutilization", "0.6");
-        property_set("dalvik.vm.heapmaxfree", "16m");
-        property_set("dalvik.vm.heapminfree", "8m");
-    } else {
-        // Set for 2/3GB RAM
-        property_set("dalvik.vm.heapstartsize", "8m");
-        property_set("dalvik.vm.heapgrowthlimit", "192m");
-        property_set("dalvik.vm.heapsize", "512m");
-        property_set("dalvik.vm.heaptargetutilization", "0.75");
-        property_set("dalvik.vm.heapmaxfree", "8m");
-        property_set("dalvik.vm.heapminfree", "512k");
-    }
+  if (sys.totalram > 3072ull * 1024 * 1024) {
+    // Set for 4GB RAM
+    property_set("dalvik.vm.heapstartsize", "8m");
+    property_set("dalvik.vm.heapgrowthlimit", "192m");
+    property_set("dalvik.vm.heapsize", "512m");
+    property_set("dalvik.vm.heaptargetutilization", "0.6");
+    property_set("dalvik.vm.heapmaxfree", "16m");
+    property_set("dalvik.vm.heapminfree", "8m");
+  } else {
+    // Set for 2/3GB RAM
+    property_set("dalvik.vm.heapstartsize", "8m");
+    property_set("dalvik.vm.heapgrowthlimit", "192m");
+    property_set("dalvik.vm.heapsize", "512m");
+    property_set("dalvik.vm.heaptargetutilization", "0.75");
+    property_set("dalvik.vm.heapmaxfree", "8m");
+    property_set("dalvik.vm.heapminfree", "512k");
+  }
 }
 
 void set_avoid_gfxaccel_config() {
-    struct sysinfo sys;
-    sysinfo(&sys);
+  struct sysinfo sys;
+  sysinfo(&sys);
 
-    if (sys.totalram <= 2048ull * 1024 * 1024) {
-        // Reduce memory footprint
-        property_set("ro.config.avoid_gfx_accel", "true");
-    }
+  if (sys.totalram <= 2048ull * 1024 * 1024) {
+    // Reduce memory footprint
+    property_set("ro.config.avoid_gfx_accel", "true");
+  }
 }
 
 void vendor_load_properties() {
-    std::string boot_cert = android::base::GetProperty("ro.boot.product.cert", "");
+  std::string boot_cert = android::base::GetProperty("ro.boot.product.cert", "");
 
-    if (boot_cert == "M1810F6LG" || boot_cert == "M1810F6LH" || boot_cert == "M1810F6LI"
-            || boot_cert == "M1810F6LE" || boot_cert == "M1810F6LT" || boot_cert == "M1810F6LC") {
-        // Redmi 7 (onclite)
-        load_props("onclite", "Redmi 7");
-        set_build_fingerprint(
-            "xiaomi/onc/onc:10/QKQ1.191008.001/V12.5.3.0.QFLCNXM:user/release-keys",
-            "onc-user 10 QKQ1.191008.001 V12.5.3.0.QFLCNXM release-keys"
-        );
-    } else if (boot_cert == "M1810F6G" || boot_cert == "M1810F6I") {
-        // Redmi Y3 (onc)
-        load_props("onc", "Redmi Y3");
-        set_build_fingerprint(
-            "xiaomi/onc/onc:10/QKQ1.191008.001/V11.0.6.0.QFFINXM:user/release-keys",
-            "onc-user 10 QKQ1.191008.001 V11.0.6.0.QFFINXM release-keys"
-        );
-    }
+  if (boot_cert == "M1810F6LG" || boot_cert == "M1810F6LH" || boot_cert == "M1810F6LI" || boot_cert == "M1810F6LE" || boot_cert == "M1810F6LT" || boot_cert == "M1810F6LC") {
+    // Redmi 7 (onclite)
+    load_props("onclite", "Redmi 7");
+    set_build_fingerprint(
+        "xiaomi/onc/onc:10/QKQ1.191008.001/V12.5.3.0.QFLCNXM:user/release-keys",
+        "onc-user 10 QKQ1.191008.001 V12.5.3.0.QFLCNXM release-keys");
+  } else if (boot_cert == "M1810F6G" || boot_cert == "M1810F6I") {
+    // Redmi Y3 (onc)
+    load_props("onc", "Redmi Y3");
+    set_build_fingerprint(
+        "xiaomi/onc/onc:10/QKQ1.191008.001/V11.0.6.0.QFFINXM:user/release-keys",
+        "onc-user 10 QKQ1.191008.001 V11.0.6.0.QFFINXM release-keys");
+  }
 
-    set_dalvik_properties();
-    set_avoid_gfxaccel_config();
+  set_dalvik_properties();
+  set_avoid_gfxaccel_config();
 }
